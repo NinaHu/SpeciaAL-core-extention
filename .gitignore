@@ -7,6 +7,7 @@ __pycache__
 *.pnml
 
 myenv/
+new_env/
 
 logs/Road_Traffic_Fine_Management_Process.xes
 logs/*
