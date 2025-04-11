@@ -1,0 +1,13 @@
+logs/
+build/
+.idea/
+__pycache__
+*.pdf
+*.xes
+*.pnml
+
+logs/Road_Traffic_Fine_Management_Process.xes
+logs/*
+special4pm/eval/fig
+special4pm/eval/nets
+special4pm/eval/out
