@@ -8,12 +8,12 @@ from pandas import DataFrame
 from pm4py.objects.log.obj import EventLog, Trace
 from special4pm.bootstrap import bootstrap
 from tqdm import tqdm
-from collections import Counter# Nina
+from collections import Counter
 
 from special4pm.estimation.metrics import get_singletons, get_doubletons, completeness, coverage, \
     sampling_effort_abundance, sampling_effort_incidence, hill_number_asymptotic, entropy_exp, simpson_diversity, ace, \
     ace_modified, ice, ice_modified, jackknife1_abundance, jackknife1_incidence, jackknife2_abundance, \
-    jackknife2_incidence, chao1, chao2, iChao1, iChao2, calculate_C_ice, calculate_gamma_sq_ice, calculate_Q_frequencies
+    jackknife2_incidence, chao1, chao2, iChao1, iChao2, calculate_C_ice #calculate_gamma_sq_ice, #calculate_Q_frequencies
 
 
 # TODO enum for proper key access
@@ -91,7 +91,6 @@ class MetricManager(dict):
             self["incidence_l_" + str(l)] = [0]
             self["incidence_l_" + str(l)+"_ci"] = [-1]
 
-        # Nina
         if ace:
             self["ace"] = [0]
 
@@ -127,7 +126,6 @@ class MetricManager(dict):
 
         if iChao2:
             self["iChao2"] = [0]
-        # Nina end
 
 
 class SpeciesEstimator:
@@ -160,7 +158,6 @@ class SpeciesEstimator:
         self.include_c0 = c0
         self.include_c1 = c1
 
-        # Nina
         self.include_ace = ace
         self.include_ace_modified = ace_modified
         self.include_ice = ice
@@ -173,7 +170,6 @@ class SpeciesEstimator:
         self.include_chao2 = chao2
         self.include_iChao1 = iChao1
         self.include_iChao2 = iChao2
-        # Nina end
 
         self.no_bootstrap_samples = no_bootstrap_samples
 
@@ -200,8 +196,9 @@ class SpeciesEstimator:
         #print("Adding Bootstrapping Confidence Intervals")
         for species_id in self.metrics.keys():
             ci=(bootstrap.get_bootstrap_ci_incidence(self.metrics[species_id].reference_sample_incidence,
-                                                       self.metrics[species_id].incidence_sample_size - self.metrics[species_id].empty_traces,
-                                                       sample_size))
+                                                       self.metrics[species_id].incidence_sample_size -
+                                                       self.metrics[species_id].empty_traces, sample_size))
+
             self.metrics[species_id]["incidence_estimate_d0_ci"][-1] = ci[0]
             self.metrics[species_id]["incidence_estimate_d1_ci"][-1] = ci[1]
             self.metrics[species_id]["incidence_estimate_d2_ci"][-1] = ci[2]
@@ -301,7 +298,7 @@ class SpeciesEstimator:
             self.metrics[species_id].incidence_current_total_species_count + len(
                 species_incidence)
 
-        #update current degree of spatial aggregation
+        # update current degree of spatial aggregation
         if self.metrics[species_id].incidence_current_total_species_count == 0:
             self.metrics[species_id].current_co_occurrence = 0
         else:
@@ -313,23 +310,23 @@ class SpeciesEstimator:
         """
         updates the diversity and completeness profiles based on the current observations
         """
-        #if self.current_obs_empty:
+        #  if self.current_obs_empty:
         #    return
 
         # update number of observations so far
         self.metrics[species_id]["abundance_no_observations"].append(self.metrics[species_id].abundance_sample_size)
         self.metrics[species_id]["incidence_no_observations"].append(self.metrics[species_id].incidence_sample_size)
 
-        #update number of species seen so far
+        # update number of species seen so far
         self.metrics[species_id]["abundance_sum_species_counts"].append(
             self.metrics[species_id].abundance_current_total_species_count)
         self.metrics[species_id]["incidence_sum_species_counts"].append(
             self.metrics[species_id].incidence_current_total_species_count)
 
-        #update degree of spatial aggregation
+        # update degree of spatial aggregation
         self.metrics[species_id]["degree_of_co_occurrence"].append(self.metrics[species_id].current_co_occurrence)
 
-        #update singleton and doubleton counts
+        # update singleton and doubleton counts
         self.metrics[species_id]["abundance_singletons"].append(
             get_singletons(self.metrics[species_id].reference_sample_abundance))
         self.metrics[species_id]["incidence_singletons"].append(
@@ -340,7 +337,7 @@ class SpeciesEstimator:
         self.metrics[species_id]["incidence_doubletons"].append(
             get_doubletons(self.metrics[species_id].reference_sample_incidence))
 
-        #update diversity profile
+        # update diversity profile
         if self.include_d0:
             self.__update_d0(species_id)
         if self.include_d1:
@@ -348,63 +345,61 @@ class SpeciesEstimator:
         if self.include_d2:
             self.__update_d2(species_id)
 
-        #update completeness profile
+        # update completeness profile
         if self.include_c0:
             self.__update_c0(species_id)
         if self.include_c1:
             self.__update_c1(species_id)
 
-        ### Nina
-        # Update ACE profile
+        # update ACE profile
         if self.include_ace:
             self.__update_ace(species_id)
 
-        # Update ACE_modified profile
+        # update ACE_modified profile
         if self.include_ace_modified:
             self.__update_ace_modified(species_id)
 
-        # Update ICE profile
+        # update ICE profile
         if self.include_ice:
             self.__update_ice(species_id)
 
-        # Update ICE_modified profile
+        # update ICE_modified profile
         if self.include_ice_modified:
             self.__update_ice_modified(species_id)
 
-        # Update JACKKNIFE1_abundance profile
+        # update JACKKNIFE1_abundance profile
         if self.include_jackknife1_abundance:
             self.__update_jackknife1_abundance(species_id)
 
-        # Update JACKKNIFE1_incidence profile
+        # update JACKKNIFE1_incidence profile
         if self.include_jackknife1_incidence:
             self.__update_jackknife1_incidence(species_id)
 
-        # Update JACKKNIFE2_abundance profile
+        # update JACKKNIFE2_abundance profile
         if self.include_jackknife2_abundance:
             self.__update_jackknife2_abundance(species_id)
 
-        # Update JACKKNIFE2_incidence profile
+        # update JACKKNIFE2_incidence profile
         if self.include_jackknife2_incidence:
             self.__update_jackknife2_incidence(species_id)
 
-        # Update CHAO1 profile
+        # update CHAO1 profile
         if self.include_chao1:
             self.__update_chao1(species_id)
 
-        # Update CHAO2 profile
+        # update CHAO2 profile
         if self.include_chao2:
             self.__update_chao2(species_id)
 
-        # Update iCHAO1 profile
+        # update iCHAO1 profile
         if self.include_iChao1:
             self.__update_iChao1(species_id)
 
-        # Update iCHAO2 profile
+        # update iCHAO2 profile
         if self.include_iChao2:
             self.__update_iChao2(species_id)
-        ### Nina end
 
-        #update estimated sampling effort for target completeness
+        # update estimated sampling effort for target completeness
         for l in self.l_n:
             self.__update_l(l, species_id)
 
@@ -412,11 +407,11 @@ class SpeciesEstimator:
         """
         updates D0 (=species richness) based on the current observations
         """
-        #update sample metrics
+        # update sample metrics
         self.metrics[species_id]["abundance_sample_d0"].append(len(self.metrics[species_id].reference_sample_abundance))
         self.metrics[species_id]["incidence_sample_d0"].append(len(self.metrics[species_id].reference_sample_incidence))
 
-        #update estimated metrics
+        # update estimated metrics
         self.metrics[species_id]["abundance_estimate_d0"].append(
             hill_number_asymptotic(0, self.metrics[species_id].reference_sample_abundance,
                                    self.metrics[species_id].abundance_sample_size))
@@ -927,13 +922,13 @@ class SpeciesEstimator:
         """
         updates D1 (=exponential of Shannon entropy) based on the current observations
         """
-        #update sample metrics
+        # update sample metrics
         self.metrics[species_id]["abundance_sample_d1"].append(
             entropy_exp(self.metrics[species_id].reference_sample_abundance))
         self.metrics[species_id]["incidence_sample_d1"].append(
             entropy_exp(self.metrics[species_id].reference_sample_incidence))
 
-        #update estimated metrics
+        # update estimated metrics
         self.metrics[species_id]["abundance_estimate_d1"].append(
             hill_number_asymptotic(1, self.metrics[species_id].reference_sample_abundance,
                                    self.metrics[species_id].abundance_sample_size))
@@ -947,13 +942,13 @@ class SpeciesEstimator:
         """
         updates D2 (=Simpson Diversity Index) based on the current observations
         """
-        #update sample metrics
+        # update sample metrics
         self.metrics[species_id]["abundance_sample_d2"].append(
             simpson_diversity(self.metrics[species_id].reference_sample_abundance))
         self.metrics[species_id]["incidence_sample_d2"].append(
             simpson_diversity(self.metrics[species_id].reference_sample_incidence))
 
-        #update estimated metrics
+        #  update estimated metrics
         self.metrics[species_id]["abundance_estimate_d2"].append(
             hill_number_asymptotic(2, self.metrics[species_id].reference_sample_abundance,
                                    self.metrics[species_id].abundance_sample_size))
@@ -1072,7 +1067,7 @@ class SpeciesEstimator:
             if self.include_d0:
                 print("%-30s %s" % ("     D0 - sample:", (self.metrics[species_id]["abundance_sample_d0"])))
                 print("%-30s %s" % ("     D0 - estimate:", str(self.metrics[species_id]["abundance_estimate_d0"])))
-            # Nina
+
             if self.include_ace:
                 print("%-30s %s" % ("ace:", str(self.metrics[species_id]["ace_abundance_estimate_d0"])))
 
@@ -1090,7 +1085,6 @@ class SpeciesEstimator:
 
             if self.include_jackknife2_abundance:
                 print("%-30s %s" % ("jackknife2_abundance:", str(self.metrics[species_id]["jackknife2_abundance_estimate_d0"])))
-            # Nina end
 
             if self.include_d1:
                 print("%-30s %s" % ("     D1 - sample:", str(self.metrics[species_id]["abundance_sample_d1"])))
@@ -1110,7 +1104,6 @@ class SpeciesEstimator:
                 print("%-30s %s" % ("     D0 - estimate:", str(self.metrics[species_id]["incidence_estimate_d0"])))
                 print("%-30s %s" % ("     D0 - CI:", str(self.metrics[species_id]["incidence_estimate_d0_ci"])))
 
-            # Nina
             if self.include_ice:
                 print("%-30s %s" % ("ice:", str(self.metrics[species_id]["ice_incidence_estimate_d0"])))
 
@@ -1128,7 +1121,6 @@ class SpeciesEstimator:
 
             if self.include_iChao2:
                 print("%-30s %s" % ("iChao2:", str(self.metrics[species_id]["iChao2_incidence_estimate_d0"])))
-            # Nina end
 
             if self.include_d1:
                 print("%-30s %s" % ("     D1 - sample:", str(self.metrics[species_id]["incidence_sample_d1"])))

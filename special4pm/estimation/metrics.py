@@ -4,10 +4,8 @@ from random import sample
 import mpmath
 from numpy import euler_gamma
 from scipy.special import digamma
-
 from cachetools import cached
-
-from collections import defaultdict, Counter # Nina
+from collections import defaultdict, Counter
 
 
 #TODO unify incidence and abundance-based methods in one function
@@ -178,15 +176,12 @@ def estimate_species_richness_chao_corrected(obs_species_counts: dict) -> float:
         return ((obs_species_count - 1) / obs_species_count) * obs_species_count + f_1 * (f_1 - 1) / 2
 
 
-### Nina
-
 # Abundance-based dataset
-
 def get_abundance_data():
     return [20, 15, 12, 9, 7, 2, 1, 1]
 
 
-# incidence-based dataset
+# Incidence-based dataset
 def get_species_counts_and_log():
     species_counts = [12, 12, 6, 5, 3, 4, 3, 2, 1]
     data_log = [
@@ -245,7 +240,6 @@ def ace(S_abund, S_rare_abund, F1_abund, N_rare_abund, Fi_abund):
     #print(f"C_ace: {C_ace}")
 
     gamma_sq_ace = calculate_gamma_sq_ace(S_rare_abund, C_ace, Fi_abund, N_rare_abund)
-
     #print(f"gamma_sq_ace: {gamma_sq_ace}")
 
     if C_ace == 0:
@@ -300,7 +294,7 @@ def test_ace():
     #print(gamma_sq_ace_result)
 
 
-# ACE with modified Gamma² --> with the formula from the new paper
+# ACE with modified Gamma²
 
 def calculate_C_ace(F1_abund, N_rare_abund):
     """
@@ -880,8 +874,6 @@ if __name__ == "__main__":
     test_chao2()
     test_iChao1_abundance()
     test_iChao2_incidence()
-
-### Nina end
 
 
 def estimate_exp_shannon_entropy_abundance(obs_species_counts: dict, sample_size: int) -> float:
