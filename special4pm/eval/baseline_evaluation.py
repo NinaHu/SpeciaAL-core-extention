@@ -52,16 +52,6 @@ def save_separate_csv_files(stats, name):
 
     print(f"Separate CSV files for individual metrics and combined n-grams saved in: {output_folder}")
 
-    ''''
-    ### new
-    # Add TV combined data
-    if "tv" in stats["species"].unique():
-        tv_data = stats[stats["species"] == "tv"]
-        tv_file_path = os.path.join(output_folder, "combined_tv_stats.csv")
-        tv_data.to_csv(tv_file_path, index=False)
-    ### new end
-    '''
-
 
 def evaluate_model(path, name, repetitions, log_size, true_values):
     # load the model and simulate logs
@@ -124,10 +114,9 @@ def evaluate_model(path, name, repetitions, log_size, true_values):
 
         # DEBUG: check the length and the values for the dataframe
         obs_ids = df[(df["species"] == species) & (df["metric"] == "incidence_no_observations")]["value"].to_list()
-        #print(f"Observation IDs for {species}: {obs_ids}")
         no_obs = len(
             stats[(stats["species"] == species) & (stats["metric"] == "incidence_no_observations")]["mean"].to_list())
-        #print(f"Number of observations for {species}: {no_obs}")
+
 
         for metric in ["ace", "ace_modified", "chao1", "iChao1", "jackknife1_abundance", "jackknife1_incidence",
                        "jackknife2_abundance", "jackknife2_incidence", "ice", "ice_modified", "chao2", "iChao2"]:
@@ -208,9 +197,6 @@ def evaluate_model(path, name, repetitions, log_size, true_values):
             fig, ax1 = plt.subplots()
             species_metric = f"{n}-gram"
 
-            #TODO:
-            # "tv" zusätzliche Plots dazu implementieren
-
             for metric in abundance_metrics:
                 if species_metric in stats["species"].unique():
                     ax1.fill_between(
@@ -290,116 +276,130 @@ def evaluate_model(path, name, repetitions, log_size, true_values):
             plt.rcParams['xtick.labelsize'] = 20
             plt.rcParams['ytick.labelsize'] = 20
 
-    # ========== TRACE VARIANT PLOTS ========== #
+    # TRACE VARIANT PLOTS
         if "tv" in estimations[0].metrics.keys():
             print("Evaluating Trace Variants")
 
             # Plot size and axis labels
-            plt.rcParams['figure.figsize'] = [20, 6]
+            plt.rcParams['figure.figsize'] = [26, 6]
             plt.rcParams['xtick.labelsize'] = 18
             plt.rcParams['ytick.labelsize'] = 18
 
-            # Abundance-based metrics
-            fig, ax1 = plt.subplots()
-            abundance_metrics = ["ace", "ace_modified", "chao1", "iChao1", "jackknife1_abundance",
-                                 "jackknife2_abundance"]
+            for n in range(1, 6):
+                n_gram_name = f"{n}-gram"
+                print(f"Creating TV vs {n_gram_name} plots")
 
-            # Initialize max_value for abundance metrics
-            max_values_abundance = []
+                # Abundance-based Plot
+                fig, ax1 = plt.subplots()
 
-            for metric in abundance_metrics:
-                if "tv" in stats["species"].unique():
-                    metric_data = stats[(stats["species"] == "tv") & (stats["metric"] == metric)]
-                    if not metric_data.empty:
-                        max_values_abundance.append(metric_data["ci95_hi"].max())
-
+                for metric in abundance_metrics:
+                    # layout for trace variants
+                    tv_data = stats[(stats["species"] == "tv") & (stats["metric"] == metric)]
+                    if not tv_data.empty:
                         ax1.fill_between(
-                            np.linspace(0, log_size, len(metric_data)),
-                            metric_data["ci95_lo"],
-                            metric_data["ci95_hi"],
+                            np.linspace(0, log_size, len(tv_data)),
+                            tv_data["ci95_lo"],
+                            tv_data["ci95_hi"],
                             alpha=0.2
                         )
-
-                        # Plot mean values for each metric
                         ax1.plot(
-                            np.linspace(0, log_size, len(metric_data)),
-                            metric_data["mean"],
-                            label=f"{metric}"
+                            np.linspace(0, log_size, len(tv_data)),
+                            tv_data["mean"],
+                            label=f'TV {metric}',
+                            linestyle='--'
                         )
 
-            # True value line
-            if "tv_abundance_estimate_d0" in true_values:
-                true_value = true_values["tv_abundance_estimate_d0"]
-                if math.isinf(true_value):
-                    max_value = max(max_values_abundance) if max_values_abundance else 1000
-                    true_value = max_value * 1.2
-                ax1.axhline(true_value, color="grey", ls="--", label="True Value")
-
-            # Title and axis labels for abundance-based metrics
-            ax1.set_title("Combined Diversity Profile for Trace Variants (Abundance-based)", fontsize=28)
-            ax1.set_xlabel("Sample Size", fontsize=24)
-            ax1.set_ylabel("Hill number", fontsize=24)
-            ax1.legend(fontsize=14, loc='best', ncol=1, frameon=True, edgecolor='lightgray')
-            plt.ylim(bottom=0)
-            plt.tight_layout()
-
-            # Save the combined plot for abundance-based metrics
-            plt.savefig("fig/combined_abundance_tv_diversity_profile.pdf", format="pdf", bbox_inches="tight")
-            plt.savefig("fig/combined_abundance_tv_diversity_profile.png", format="png", bbox_inches="tight")
-            plt.close()
-
-            # Incidence-based metrics
-            fig, ax2 = plt.subplots()
-            incidence_metrics = ["ice", "ice_modified", "chao2", "iChao2", "jackknife1_incidence",
-                                 "jackknife2_incidence"]
-
-            # Initialize max_value for incidence metrics
-            max_values_incidence = []
-
-            for metric in incidence_metrics:
-                if "tv" in stats["species"].unique():
-                    metric_data = stats[(stats["species"] == "tv") & (stats["metric"] == metric)]
-                    if not metric_data.empty:
-                        max_values_incidence.append(metric_data["ci95_hi"].max())
-
-                        ax2.fill_between(
-                            np.linspace(0, log_size, len(metric_data)),
-                            metric_data["ci95_lo"],
-                            metric_data["ci95_hi"],
+                    # layout for n-grams
+                    ngram_data = stats[(stats["species"] == n_gram_name) & (stats["metric"] == metric)]
+                    if not ngram_data.empty:
+                        ax1.fill_between(
+                            np.linspace(0, log_size, len(ngram_data)),
+                            ngram_data["ci95_lo"],
+                            ngram_data["ci95_hi"],
                             alpha=0.2
                         )
-
-                        # Plot mean values for each metric
-                        ax2.plot(
-                            np.linspace(0, log_size, len(metric_data)),
-                            metric_data["mean"],
-                            label=f"{metric}"
+                        ax1.plot(
+                            np.linspace(0, log_size, len(ngram_data)),
+                            ngram_data["mean"],
+                            label=f'{n_gram_name} {metric}',
+                            linestyle='-'
                         )
 
-            # True value line
-            if "tv_incidence_estimate_d0" in true_values:
-                true_value = true_values["tv_incidence_estimate_d0"]
-                if math.isinf(true_value):
-                    max_value = max(max_values_incidence) if max_values_incidence else 1000
-                    true_value = max_value * 1.2
-                ax2.axhline(true_value, color="grey", ls="--", label="True Value")
+                # True value line
+                if f"{n_gram_name}_abundance_estimate_d0" in true_values:
+                    ax1.axhline(true_values[f"{n_gram_name}_abundance_estimate_d0"], color="grey", ls="--",
+                                label="True Value")
 
-            # Title and axis labels for incidence-based metrics
-            ax2.set_title("Combined Diversity Profile for Trace Variants (Incidence-based)", fontsize=28)
-            ax2.set_xlabel("Sample Size", fontsize=24)
-            ax2.set_ylabel("Hill number", fontsize=24)
-            ax2.legend(fontsize=14, loc='best', ncol=1, frameon=True, edgecolor='lightgray')
-            plt.ylim(bottom=0)
-            plt.tight_layout()
+                ax1.set_title(f"Combined Diversity Profile for {n}-gram vs Trace Variance (Abundance-based)", fontsize=28)
+                ax1.set_xlabel("Sample Size", fontsize=24)
+                ax1.set_ylabel("Hill number", fontsize=24)
+                ax1.legend(fontsize=14, bbox_to_anchor=(1.05, 1), loc='upper left', frameon=True, edgecolor='lightgray')
+                plt.ylim(bottom=0)
+                plt.tight_layout()
 
-            # Save the plots
-            plt.savefig("fig/combined_incidence_tv_diversity_profile.pdf", format="pdf", bbox_inches="tight")
-            plt.savefig("fig/combined_incidence_tv_diversity_profile.png", format="png", bbox_inches="tight")
-            plt.close()
+                plt.savefig(f"fig/combined_abundance_{n}-gram_vs_tv_diversity_profile.pdf", format="pdf",
+                            bbox_inches="tight")
+                plt.savefig(f"fig/combined_abundance_{n}-gram_vs_tv_diversity_profile.png", format="png",
+                            bbox_inches="tight")
+                plt.close()
 
-            plt.rcParams['figure.figsize'] = [20, 6]
-            plt.rcParams['xtick.labelsize'] = 18
-            plt.rcParams['ytick.labelsize'] = 18
+                # Incidence-based Plot
+                fig, ax2 = plt.subplots()
+
+                for metric in incidence_metrics:
+                    # layout for trace variants
+                    tv_data = stats[(stats["species"] == "tv") & (stats["metric"] == metric)]
+                    if not tv_data.empty:
+                        ax2.fill_between(
+                            np.linspace(0, log_size, len(tv_data)),
+                            tv_data["ci95_lo"],
+                            tv_data["ci95_hi"],
+                            alpha=0.2
+                        )
+                        ax2.plot(
+                            np.linspace(0, log_size, len(tv_data)),
+                            tv_data["mean"],
+                            label=f'TV {metric}',
+                            linestyle='--'
+                        )
+
+                    # layout for n-grams
+                    ngram_data = stats[(stats["species"] == n_gram_name) & (stats["metric"] == metric)]
+                    if not ngram_data.empty:
+                        ax2.fill_between(
+                            np.linspace(0, log_size, len(ngram_data)),
+                            ngram_data["ci95_lo"],
+                            ngram_data["ci95_hi"],
+                            alpha=0.2
+                        )
+                        ax2.plot(
+                            np.linspace(0, log_size, len(ngram_data)),
+                            ngram_data["mean"],
+                            label=f'{n_gram_name} {metric}',
+                            linestyle='-'
+                        )
+
+                # True value line
+                if f"{n_gram_name}_incidence_estimate_d0" in true_values:
+                    ax2.axhline(true_values[f"{n_gram_name}_incidence_estimate_d0"], color="grey", ls="--",
+                                label="True Value")
+
+                ax2.set_title(f"Combined Diversity Profile for {n}-gram vs Trace Variance (Incidence-based)", fontsize=28)
+                ax2.set_xlabel("Sample Size", fontsize=24)
+                ax2.set_ylabel("Hill number", fontsize=24)
+                ax2.legend(fontsize=14, bbox_to_anchor=(1.05, 1), loc='upper left', frameon=True, edgecolor='lightgray')
+                plt.ylim(bottom=0)
+                plt.tight_layout()
+
+                plt.savefig(f"fig/combined_incidence_{n}-gram_vs_tv_diversity_profile.pdf", format="pdf",
+                            bbox_inches="tight")
+                plt.savefig(f"fig/combined_incidence_{n}-gram_vs_tv_diversity_profile.png", format="png",
+                            bbox_inches="tight")
+                plt.close()
+
+            plt.rcParams['figure.figsize'] = [9, 5]
+            plt.rcParams['xtick.labelsize'] = 20
+            plt.rcParams['ytick.labelsize'] = 20
 
 
 true_values_net_3 = {
