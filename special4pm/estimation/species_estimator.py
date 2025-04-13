@@ -862,10 +862,10 @@ class SpeciesEstimator:
 
         # frequency counts (from f1 to f4)
         S_obs = sum(1 for x in data if x > 0) # number of observed species
-        f1 = sum(1 for x in data if x == 1) # number of singletons
-        f2 = sum(1 for x in data if x == 2) # number of doubletons
-        f3 = sum(1 for x in data if x == 3) # number of tripletons
-        f4 = sum(1 for x in data if x == 4) # number of quadrupletons
+        f1 = sum(1 for x in data if x == 1)
+        f2 = sum(1 for x in data if x == 2)
+        f3 = sum(1 for x in data if x == 3)
+        f4 = sum(1 for x in data if x == 4)
 
         # calculation
         S_chao1 = chao1(S_obs, f1, f2)
@@ -916,7 +916,7 @@ class SpeciesEstimator:
         else:
             self.metrics[species_id]["iChao2"].append(S_obs)
 
-        ### Nina end
+        ### Nina
 
     def __update_d1(self, species_id: str) -> None:
         """
