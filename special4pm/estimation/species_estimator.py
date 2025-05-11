@@ -163,7 +163,7 @@ class SpeciesEstimator:
         self.include_ice = ice
         self.include_ice_modified = ice_modified
         self.include_jackknife1_abundance = jackknife1_abundance
-        self.include_jackknife1_incidence = jackknife2_incidence
+        self.include_jackknife1_incidence = jackknife1_incidence
         self.include_jackknife2_abundance = jackknife2_abundance
         self.include_jackknife2_incidence = jackknife2_incidence
         self.include_chao1 = chao1
@@ -422,35 +422,6 @@ class SpeciesEstimator:
         self.metrics[species_id]["incidence_estimate_d0_ci"].append(-1)
 
     ### Nina
-    """def __update_ace(self, species_id: str) -> None:
-        
-        if self.include_ace:
-
-            data = list(self.metrics[species_id].reference_sample_abundance.values())
-            if not data:
-                # Wenn keine Daten vorhanden sind, speichere None und beende
-                self.metrics[species_id]["ace"].append(None)
-                return
-
-            S_abund = sum(1 for x in data if x > 10)  # häufige species
-            S_rare_abund = sum(1 for x in data if x <= 10)  # rare species
-            F1_abund = sum(1 for x in data if x == 1)  # singletons
-            N_rare_abund = sum(x for x in data if x <= 10)  # Summe der Häufigkeiten rare species
-
-            # calc von Fi_abund
-            counts = Counter(data)
-            Fi_abund = [counts[i] for i in range(1, 11)]  # Frequenzliste von 1 bis 10
-
-            # calc ACE
-            ace_result, gamma_sq_ace = ace(S_abund, S_rare_abund, F1_abund, N_rare_abund, Fi_abund)
-
-            # if N_rare_abund = 0
-            if N_rare_abund == 0:
-                # wenn keine rare Spezies vorhanden --> return/ save S_obs
-                self.metrics[species_id]["ace"].append(S_abund + S_rare_abund)
-            else:
-                # ACE result
-                self.metrics[species_id]["ace"].append(ace_result)"""
 
     def __update_ace(self, species_id: str) -> None:
         if self.include_ace:
@@ -459,6 +430,7 @@ class SpeciesEstimator:
             if not data:
                 # if no data, append "none" and exit
                 self.metrics[species_id]["ace"].append(None)
+                #self.metrics[species_id]["ace_abundance_estimate_d0"].append(None)
                 return
 
             # parameters for the different species
@@ -477,8 +449,10 @@ class SpeciesEstimator:
             if N_rare_abund == 0:
                 # if no rare species, return observed species count
                 self.metrics[species_id]["ace"].append(S_abund + S_rare_abund)
+                #self.metrics[species_id]["ace_abundance_estimate_d0"].append(S_abund + S_rare_abund)
             else:
                 self.metrics[species_id]["ace"].append(ace_result)
+                #self.metrics[species_id]["ace_abundance_estimate_d0"].append(ace_result)
 
     def __update_ace_modified(self, species_id: str) -> None:
         if self.include_ace_modified:
@@ -490,10 +464,10 @@ class SpeciesEstimator:
                 return
 
             # parameters for the different species
-            S_abund = sum(1 for x in data if x > 10)  # frequent species
-            S_rare_abund = sum(1 for x in data if x <= 10)  # rare species
-            F1_abund = sum(1 for x in data if x == 1)  # singletons
-            N_rare_abund = sum(x for x in data if x <= 10)  # total count of rare species
+            S_abund = sum(1 for x in data if x > 10)
+            S_rare_abund = sum(1 for x in data if x <= 10)
+            F1_abund = sum(1 for x in data if x == 1)
+            N_rare_abund = sum(x for x in data if x <= 10)
 
             # frequencies of species with 1-10 observations
             counts = Counter(data)
@@ -509,106 +483,6 @@ class SpeciesEstimator:
                 S_obs = len([x for x in data if x > 0])
                 self.metrics[species_id]["ace_modified"].append(S_obs)
 
-    """def __update_ace_modified(self, species_id: str) -> None:
-        if self.include_ace_modified:
-            # Daten aus der Referenzstichprobe
-            data = list(self.metrics[species_id].reference_sample_abundance.values())
-
-            # Abbruch, wenn keine Daten vorhanden sind
-            if not data:
-                self.metrics[species_id].setdefault("ace_modified", []).append(None)
-                return
-
-            # Berechnung der benötigten Werte
-            S_abund = sum(1 for x in data if x > 10)  # Häufige Arten
-            S_rare_abund = sum(1 for x in data if x <= 10)  # Seltene Arten
-            F1_abund = sum(1 for x in data if x == 1)  # Singletons
-            N_rare_abund = sum(x for x in data if x <= 10)  # Summe der Häufigkeiten seltener Arten
-
-            # Frequenzliste F_i für i = 1 bis 10
-            counts = Counter(data)
-            Fi_abund = [counts[i] for i in range(1, 11)]
-
-            # Berechnung der modifizierten ACE-Schätzung
-            ace_result_modified, gamma_sq_ace_modified = ace_modified(S_abund, S_rare_abund, F1_abund, N_rare_abund,
-                                                                      Fi_abund)
-
-            # Ergebnis speichern
-            if N_rare_abund == 0:
-                # Wenn keine seltenen Arten vorhanden sind, speichere nur die Summe der beobachteten Arten
-                self.metrics[species_id].setdefault("ace_modified", []).append(S_abund + S_rare_abund)
-            else:
-                # Speichere das modifizierte ACE-Ergebnis
-                self.metrics[species_id].setdefault("ace_modified", []).append(ace_result_modified)"""
-
-    """"# angepasst
-    def __update_ace_modified(self, species_id: str) -> None:
-        
-        if self.include_ace_modified:
-            data = list(self.metrics[species_id].reference_sample_abundance.values())
-
-            S_abund = sum(1 for x in data if x > 10)  # häufige species
-            S_rare_abund = sum(1 for x in data if x <= 10)  # rare species
-            F1_abund = sum(1 for x in data if x == 1)  # singletons
-            N_rare_abund = sum(x for x in data if x <= 10)  # Gesamtzahl der rare species
-
-            # Häufigkeiten von species bis 10 Beobachtungen (Fi)
-            counts = Counter(data)
-            Fi_abund = [counts[i] for i in range(1, 11)]
-
-            if N_rare_abund > 0:  # es existieren rare species
-                # calc von C_ace
-                C_ace = calculate_C_ace(F1_abund, N_rare_abund)
-
-                if C_ace > 0:  # Regulärer ACE-Schätzer möglich
-                    ace_modified_result, gamma_sq_ace_modified = ace_modified(
-                        S_abund, S_rare_abund, F1_abund, N_rare_abund, Fi_abund
-                    )
-                    self.metrics[species_id]["ace_modified"].append(ace_modified_result)
-                else:  # Coverage = 0, return S_obs
-                    S_obs = len([x for x in data if x > 0])
-                    self.metrics[species_id]["ace_modified"].append(S_obs)
-            else:  # keine rare species, return S_obs (die beobachteten)
-                S_obs = len([x for x in data if x > 0])
-                self.metrics[species_id]["ace_modified"].append(S_obs)"""
-
-    """def __update_ice(self, species_id: str) -> None:
-       
-        if self.include_ice:
-            # 1. Daten aus der Referenzstichprobe der Abundanz-Daten holen
-            species_counts = list(self.metrics[species_id].reference_sample_incidence.values())
-
-            if not species_counts:
-                self.metrics[species_id].setdefault("ice", []).append(None)
-                return
-
-            # 2. Berechnungen der benötigten Werte
-            S_freq = sum(1 for x in species_counts if x > 10)  # Häufige Arten
-            S_inf = sum(1 for x in species_counts if x <= 10)  # Seltene Arten
-            N_inf = sum(x for x in species_counts if x <= 10)  # Gesamtzahl der seltenen Arten
-            Q1 = sum(1 for x in species_counts if x == 1)  # Singletons (Arten, die nur einmal vorkommen)
-            Qj = [sum(1 for x in species_counts if x == j) for j in range(1, 11)]
-
-            # Berechnung von m_inf: Anzahl der Stichproben mit seltenen Arten
-            m_inf = sum(1 for sample in self.metrics[species_id].reference_sample_incidence.values() if sample <= 10)
-
-            # Berechnung von Qj: Häufigkeit der Arten, die j-mal vorkommen
-            counts = Counter(species_counts)
-            Qj = [sum(1 for x in species_counts if x == j) for j in range(1, 11)]
-
-            # 3. Berechnung von C_ice und gamma^2_ice
-            C_ice = calculate_C_ice(Q1, N_inf)
-            gamma_sq_ice = calculate_gamma_sq_ice(S_inf, C_ice, m_inf, N_inf, Qj)
-
-            # 4. Berechnung des ICE-Ergebnisses
-            if C_ice == 0:
-                # Wenn C_ice = 0, dann nur die Summe der häufigen und seltenen Arten speichern
-                self.metrics[species_id].setdefault("ice", []).append(S_freq + S_inf)
-            else:
-                # Berechnung des ICE-Ergebnisses mit modifiziertem gamma^2_ice
-                ice_result, gamma_sq_ice_result = ice(S_freq, S_inf, Q1, N_inf, Qj, m_inf)
-                self.metrics[species_id].setdefault("ice", []).append(ice_result)"""
-
     def __update_ice(self, species_id: str) -> None:
         if self.include_ice:
             species_counts = [int(x) for x in self.metrics[species_id].reference_sample_incidence.values() if
@@ -619,10 +493,10 @@ class SpeciesEstimator:
                 return
 
             # parameters for the different species
-            S_freq = sum(1 for x in species_counts if x > 10)  # frequent species
-            S_inf = sum(1 for x in species_counts if x <= 10)  # rare species
-            Q1 = sum(1 for x in species_counts if x == 1)  # singletons
-            N_inf = sum(x for x in species_counts if x <= 10)  # total count of rare species
+            S_freq = sum(1 for x in species_counts if x > 10)
+            S_inf = sum(1 for x in species_counts if x <= 10)
+            Q1 = sum(1 for x in species_counts if x == 1)
+            N_inf = sum(x for x in species_counts if x <= 10)
 
             # number of samples with rare species
             m_inf = sum(1 for sample in species_counts if sample <= 10)
@@ -650,10 +524,10 @@ class SpeciesEstimator:
                 return
 
             # parameters for the different species
-            S_freq = sum(1 for x in species_counts if x > 10)  # frequent species
-            S_inf = sum(1 for x in species_counts if x <= 10)  # rare species
-            Q1 = sum(1 for x in species_counts if x == 1)  # singletons
-            N_inf = sum(x for x in species_counts if x <= 10)  # total count of rare species
+            S_freq = sum(1 for x in species_counts if x > 10)
+            S_inf = sum(1 for x in species_counts if x <= 10)
+            Q1 = sum(1 for x in species_counts if x == 1)
+            N_inf = sum(x for x in species_counts if x <= 10)
 
             # number of samples with rare species
             m_inf = sum(1 for sample in species_counts if sample <= 10)
@@ -670,68 +544,6 @@ class SpeciesEstimator:
                 # if no rare species or invalid coverage, append observed species count
                 S_obs = S_freq + S_inf
                 self.metrics[species_id]["ice_modified"].append(S_obs)
-
-    """def __update_ice(self, species_id: str) -> None:
-        
-        if self.include_ice:
-            species_counts = list(self.metrics[species_id].reference_sample_incidence.values())
-
-            if not species_counts:
-                self.metrics[species_id].setdefault("ice", []).append(None)
-                return
-
-            S_freq = sum(1 for x in species_counts if x > 10)
-            S_inf = sum(1 for x in species_counts if x <= 10)  # seltene species
-            Q1 = sum(1 for x in species_counts if x == 1)
-            N_inf = sum(x for x in species_counts if x <= 10)  # gesamtzahl der seltenen Arten
-
-            # m_inf: # seltene species
-            m_inf = sum(1 for sample in self.metrics[species_id].reference_sample_incidence.values() if sample <= 10)
-
-            Qj = [sum(1 for x in species_counts if x == j) for j in range(1, 11)]
-
-            C_ice = calculate_C_ice(Q1, N_inf)
-            gamma_sq_ice = calculate_gamma_sq_ice(S_inf, C_ice, m_inf, N_inf, Qj)
-
-            if N_inf > 0:
-                # if S_inf --> calc ice
-                ice_result, _ = ice(S_freq, S_inf, Q1, N_inf, Qj, m_inf)
-                self.metrics[species_id]["ice"].append(ice_result)
-            else:
-                # if no S_inf species --> save S_obs
-                S_obs = S_freq + S_inf
-                self.metrics[species_id]["ice"].append(S_obs)"""
-
-    """# update methode angepasst --> statt none, return observed species
-    def __update_ice_modified(self, species_id: str) -> None:
-        
-        if self.include_ice_modified:
-            data = list(self.metrics[species_id].reference_sample_incidence.values())
-
-            S_freq = sum(1 for x in data if x > 10)
-            S_inf = sum(1 for x in data if x <= 10)
-            Q1 = sum(1 for x in data if x == 1)
-            N_inf = sum(x for x in data if x <= 10)
-            Qj = [sum(1 for x in data if x == i) for i in range(1, 11)]
-            m_inf = sum(1 for sample in self.metrics[species_id].reference_sample_incidence.values() if sample <= 10)
-
-            if N_inf > 0:
-                ice_modified_result, gamma_sq_ice_modified = ice_modified(S_freq, S_inf, Q1, N_inf, Qj, m_inf)
-                self.metrics[species_id]["ice_modified"].append(ice_modified_result)
-            else:
-                S_obs = len([x for x in data if x > 0])
-                self.metrics[species_id]["ice_modified"].append(S_obs)"""
-
-
-    """def __update_jackknife1_abundance(self, species_id: str) -> None:
-        if self.include_jackknife1_abundance:
-            S_obs = len(self.metrics[species_id].reference_sample_abundance)
-            Q1 = sum(1 for count in self.metrics[species_id].reference_sample_abundance.values() if count == 1)
-            m = self.metrics[species_id].abundance_sample_size
-
-            jackknife1_abundance_result = jackknife1_abundance(S_obs, Q1, m)
-            #self.metrics[species_id]["jackknife1_abundance"].append(jackknife1_abundance_result)
-            self.metrics[species_id].setdefault("jackknife1_abundance", []).append(jackknife1_abundance_result)"""
 
     def __update_jackknife1_abundance(self, species_id: str) -> None:
         if self.include_jackknife1_abundance:
@@ -769,21 +581,6 @@ class SpeciesEstimator:
             jackknife2_incidence_result = jackknife2_incidence(S_obs, Q1, Q2, m)
             self.metrics[species_id].setdefault("jackknife2_incidence", []).append(jackknife2_incidence_result)
 
-
-    """def __update_chao1(self, species_id: str) -> None:
-        if self.include_chao1:
-            data = list(self.metrics[species_id].reference_sample_abundance.values())
-            S_obs = sum(1 for x in data if x > 0)
-            f1 = sum(1 for x in data if x == 1)
-            f2 = sum(1 for x in data if x == 2)
-
-            if f2 == 0:
-                chao1_estimate = S_obs + (f1 * (f1 - 1)) / 2
-            else:
-                chao1_estimate = S_obs + (f1 ** 2) / (2 * f2)
-            #self.metrics[species_id]["chao1"].append(chao1_estimate)
-            self.metrics[species_id].setdefault("chao1", []).append(chao1_estimate)"""
-
     def __update_chao1(self, species_id: str) -> None:
         data = list(self.metrics[species_id].reference_sample_abundance.values())
         if not data:
@@ -801,24 +598,6 @@ class SpeciesEstimator:
 
         self.metrics[species_id]["chao1"].append(chao1_estimate)
 
-    """def __update_chao2(self, species_id: str) -> None:
-        if self.include_chao2:
-            #data = list(self.metrics[species_id].reference_sample_abundance.values())
-            data = list(self.metrics[species_id].reference_sample_incidence.values())
-            S_obs = sum(1 for x in data if x > 0)
-            Q1 = sum(1 for x in data if x == 1)
-            Q2 = sum(1 for x in data if x == 2)
-
-            if Q2 == 0:
-                chao2_estimate = S_obs + (Q1 * (Q1 - 1)) / 2
-            else:
-                #chao2_estimate = S_obs + (Q1 * Q1) / (2 * Q2)
-                chao2_estimate = S_obs + (Q1 ** 2) / (2 * Q2)
-            # save
-            #if "chao2" not in self.metrics[species_id]:
-                #self.metrics[species_id]["chao2"] = []
-            #self.metrics[species_id]["chao2"].append(chao2_estimate)
-            self.metrics[species_id].setdefault("chao2", []).append(chao2_estimate)"""
 
     def __update_chao2(self, species_id: str) -> None:
         data = list(self.metrics[species_id].reference_sample_incidence.values())
@@ -837,22 +616,6 @@ class SpeciesEstimator:
 
         self.metrics[species_id]["chao2"].append(chao2_estimate)
 
-    """def __update_iChao1(self, species_id: str) -> None:
-        if self.include_iChao1:
-            data = list(self.metrics[species_id].reference_sample_abundance.values())
-            S_obs = sum(1 for x in data if x > 0)
-            f1 = sum(1 for x in data if x == 1)
-            f2 = sum(1 for x in data if x == 2)
-            f3 = sum(1 for x in data if x == 3)
-            f4 = sum(1 for x in data if x == 4)
-
-            if S_obs > 0:
-                # calculate chao1 first
-                S_chao1 = chao1(S_obs, f1, f2)
-                #iChao1_result = iChao1(S_obs, f1, f2, f3, f4)
-                iChao1_result = iChao1(S_chao1, f1, f2, f3, f4)
-                #self.metrics[species_id]["iChao1"].append(iChao1_result)
-                self.metrics[species_id].setdefault("iChao1", []).append(iChao1_result)"""
 
     def __update_iChao1(self, species_id: str) -> None:
         data = list(self.metrics[species_id].reference_sample_abundance.values())
@@ -872,27 +635,6 @@ class SpeciesEstimator:
         iChao1_result = iChao1(S_chao1, f1, f2, f3, f4)
 
         self.metrics[species_id]["iChao1"].append(iChao1_result)
-
-    """def __update_iChao2(self, species_id: str) -> None:
-        if self.include_iChao2:
-            data = list(self.metrics[species_id].reference_sample_incidence.values())
-            S_obs = sum(1 for x in data if x > 0)
-            Q1 = sum(1 for x in data if x == 1)
-            Q2 = sum(1 for x in data if x == 2)
-            Q3 = sum(1 for x in data if x == 3)
-            Q4 = sum(1 for x in data if x == 4)
-            T = sum(data)
-
-            if T > 0:
-                # calculate chao2 first
-                S_chao2 = chao2(S_obs, Q1, Q2)
-                #iChao2_result = iChao2(S_obs, Q1, Q2, Q3, Q4, T)
-                iChao2_result = iChao2(S_chao2, Q1, Q2, Q3, Q4, T)
-                #self.metrics[species_id]["iChao2"].append(iChao2_result)
-                self.metrics[species_id].setdefault("iChao2", []).append(iChao2_result)
-                # die return Werte sind hier optional
-                return iChao2_result
-            return 0.0  # if T = 0"""
 
     def __update_iChao2(self, species_id: str) -> None:
         data = list(self.metrics[species_id].reference_sample_incidence.values())

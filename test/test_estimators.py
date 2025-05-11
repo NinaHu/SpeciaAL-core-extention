@@ -14,15 +14,14 @@ from special4pm.estimation.metrics import (
 
 class TestAceEstimators(unittest.TestCase):
     def setUp(self):
-        # Standalone datasets for testing
-        self.data_normal = [1, 2, 2, 3, 4, 4, 5, 10, 12]  # General case
-        self.data_empty = []  # Edge case: empty data
-        self.data_all_abundant = [20, 15, 12, 11]  # All species are abundant (>10)
-        self.data_only_rare = [10, 9, 8, 7, 6]  # All species are rare (≤10)
-        self.data_singletons_only = [1, 1, 1]  # Only singletons
-        self.data_no_singletons = [2, 3, 4]  # No singletons
-        self.data_one_rare_species = [1]  # Single rare species
-        self.data_all_singletons = [1, 1, 1, 1]  # All species are singletons
+        self.data_normal = [1, 2, 2, 3, 4, 4, 5, 10, 12]
+        self.data_empty = []
+        self.data_all_abundant = [20, 15, 12, 11]  # all species are abundant (>10)
+        self.data_only_rare = [10, 9, 8, 7, 6]  # all species are rare (≤10)
+        self.data_singletons_only = [1, 1, 1]
+        self.data_no_singletons = [2, 3, 4]
+        self.data_one_rare_species = [1]
+        self.data_all_singletons = [1, 1, 1, 1]
 
     def test_ace_normal(self):
         """ACE calculation with normal data"""
@@ -131,7 +130,6 @@ class TestAceModified(unittest.TestCase):
 # ICE modified tests
 class TestIceModified(unittest.TestCase):
     def setUp(self):
-        # Custom datasets for testing
         self.species_counts_1 = [12, 12, 6, 5, 3, 4, 3, 2, 1]
         self.data_log_1 = [
             ["A", "B", "C", "D"],
@@ -201,11 +199,11 @@ class TestIceModified(unittest.TestCase):
 
     class TestJackknife1Abundance(unittest.TestCase):
         def setUp(self):
-            # Custom datasets for testing
-            self.data_normal = [10, 15, 20, 25, 30]  # General case
-            self.data_with_singletons = [1, 1, 5, 10, 15]  # Includes singletons
-            self.data_no_singletons = [5, 10, 15, 20]  # No singletons
-            self.data_empty = []  # Empty dataset
+
+            self.data_normal = [10, 15, 20, 25, 30]
+            self.data_with_singletons = [1, 1, 5, 10, 15]
+            self.data_no_singletons = [5, 10, 15, 20]
+            self.data_empty = []
 
         def test_jackknife1_abundance_normal(self):
             """Jackknife-1 with normal abundance-based data"""
@@ -245,7 +243,7 @@ class TestIceModified(unittest.TestCase):
 
     class TestJackknife1Incidence(unittest.TestCase):
         def setUp(self):
-            # Custom datasets for testing
+
             self.species_counts_1 = [12, 12, 6, 5, 3, 4, 3, 2, 1]
             self.data_log_1 = [
                 ["A", "B", "C", "D"],
@@ -279,11 +277,11 @@ class TestIceModified(unittest.TestCase):
     class TestJackknife2Abundance(unittest.TestCase):
         def setUp(self):
             # Custom datasets for testing
-            self.data_normal = [10, 15, 20, 25, 30]  # General case
-            self.data_with_singletons = [1, 1, 5, 10, 15]  # Includes singletons
-            self.data_with_doubletons = [2, 2, 5, 10, 15]  # Includes doubletons
-            self.data_no_singletons_or_doubletons = [5, 10, 15, 20, 25]  # No singletons or doubletons
-            self.data_empty = []  # Empty dataset
+            self.data_normal = [10, 15, 20, 25, 30]
+            self.data_with_singletons = [1, 1, 5, 10, 15]
+            self.data_with_doubletons = [2, 2, 5, 10, 15]
+            self.data_no_singletons_or_doubletons = [5, 10, 15, 20, 25]
+            self.data_empty = []
 
         def test_jackknife2_abundance_normal(self):
             """Jackknife-2 with normal abundance-based data"""
@@ -314,8 +312,8 @@ class TestIceModified(unittest.TestCase):
 
     class TestJackknife2Incidence(unittest.TestCase):
         def setUp(self):
-            # Custom datasets for testing
-            self.species_counts_1 = [12, 12, 6, 5, 3, 4, 3, 2, 1]  # General case
+
+            self.species_counts_1 = [12, 12, 6, 5, 3, 4, 3, 2, 1]
             self.data_log_1 = [
                 ["A", "B", "C", "D"],
                 ["A", "B", "E", "F"],
@@ -348,16 +346,15 @@ class TestIceModified(unittest.TestCase):
             self.assertEqual(result, S_obs,
                              "Jackknife-2 should equal observed richness when no singletons or doubletons exist")
 
-
     # Chao1 tests
     class TestChao1Estimator(unittest.TestCase):
         def setUp(self):
-            # Custom datasets for testing
-            self.data_normal = [1, 1, 2, 2, 3, 4, 4, 4, 10, 12]  # General case
-            self.data_no_doubletons = [1, 1, 3, 4, 4, 4, 10, 12]  # No doubletons
-            self.data_no_singletons = [2, 2, 3, 4, 4, 4, 10, 12]  # No singletons
-            self.data_singletons_only = [1, 1, 1]  # Only singletons
-            self.data_empty = []  # Empty dataset
+
+            self.data_normal = [1, 1, 2, 2, 3, 4, 4, 4, 10, 12]
+            self.data_no_doubletons = [1, 1, 3, 4, 4, 4, 10, 12]
+            self.data_no_singletons = [2, 2, 3, 4, 4, 4, 10, 12]
+            self.data_singletons_only = [1, 1, 1]
+            self.data_empty = []
 
         def test_chao1_normal(self):
             """Chao1 with normal abundance-based data"""
@@ -375,7 +372,7 @@ class TestIceModified(unittest.TestCase):
             S_obs = len(self.data_no_doubletons)
             abundance_counts = Counter(self.data_no_doubletons)
             f1 = abundance_counts[1]
-            f2 = abundance_counts[2]  # Should be 0
+            f2 = abundance_counts[2]  # should be 0
             result = chao1(S_obs, f1, f2)
             expected = S_obs + (f1 ** 2) / 2
             self.assertAlmostEqual(result, expected, places=5,
@@ -385,20 +382,20 @@ class TestIceModified(unittest.TestCase):
             """Chao1 when no singletons are present"""
             S_obs = len(self.data_no_singletons)
             abundance_counts = Counter(self.data_no_singletons)
-            f1 = abundance_counts[1]  # Should be 0
+            f1 = abundance_counts[1]  # should be 0
             f2 = abundance_counts[2]
             result = chao1(S_obs, f1, f2)
-            expected = S_obs  # No adjustment needed
+            expected = S_obs
             self.assertEqual(result, expected, "Chao1 should equal observed richness when no singletons exist")
 
         def test_chao1_singletons_only(self):
             """Chao1 when the dataset contains only singletons"""
             S_obs = len(self.data_singletons_only)
             abundance_counts = Counter(self.data_singletons_only)
-            f1 = abundance_counts[1]  # Should equal S_obs
-            f2 = abundance_counts[2]  # Should be 0
+            f1 = abundance_counts[1]  # should = S_obs
+            f2 = abundance_counts[2]  # should be = 0
             result = chao1(S_obs, f1, f2)
-            expected = S_obs + (f1 ** 2) / 2  # Fallback formula
+            expected = S_obs + (f1 ** 2) / 2
             self.assertAlmostEqual(result, expected, places=5,
                                    msg="Chao1 result does not match expected value for singletons-only dataset")
 
@@ -413,13 +410,13 @@ class TestIceModified(unittest.TestCase):
     # iChao1 tests
     class TestIChao1Estimator(unittest.TestCase):
         def setUp(self):
-            # Custom datasets for testing
-            self.data_normal = [1, 1, 2, 2, 3, 3, 4, 4, 5, 10]  # General case
-            self.data_no_quadrupletons = [1, 1, 2, 2, 3, 3, 3, 5]  # No quadrupletons
-            self.data_no_tripletons = [1, 1, 2, 2, 4, 4, 5]  # No tripletons
-            self.data_no_doubletons = [1, 1, 3, 3, 3, 4, 4]  # No doubletons
-            self.data_singletons_only = [1, 1, 1]  # Only singletons
-            self.data_empty = []  # Empty dataset
+
+            self.data_normal = [1, 1, 2, 2, 3, 3, 4, 4, 5, 10]
+            self.data_no_quadrupletons = [1, 1, 2, 2, 3, 3, 3, 5]
+            self.data_no_tripletons = [1, 1, 2, 2, 4, 4, 5]
+            self.data_no_doubletons = [1, 1, 3, 3, 3, 4, 4]
+            self.data_singletons_only = [1, 1, 1]
+            self.data_empty = []
 
         def calculate_frequencies(self, data):
             counter = Counter(data)
@@ -459,7 +456,7 @@ class TestIceModified(unittest.TestCase):
             f1, f2, f3, f4 = self.calculate_frequencies(self.data_no_tripletons)
             S_chao1 = chao1(S_obs, f1, f2)
             result = iChao1(S_chao1, f1, f2, f3, f4)
-            expected = S_chao1  # No correction term as f3 = 0
+            expected = S_chao1
             self.assertEqual(result, expected, "iChao1 should equal Chao1 when no tripletons exist")
 
         def test_ichao1_no_doubletons(self):
@@ -467,7 +464,7 @@ class TestIceModified(unittest.TestCase):
             f1, f2, f3, f4 = self.calculate_frequencies(self.data_no_doubletons)
             S_chao1 = chao1(S_obs, f1, f2)
             result = iChao1(S_chao1, f1, f2, f3, f4)
-            expected = S_chao1  # No adjustment in Chao1 as f2 = 0
+            expected = S_chao1
             self.assertEqual(result, expected, "iChao1 should equal Chao1 when no doubletons exist")
 
         def test_ichao1_singletons_only(self):
@@ -475,7 +472,7 @@ class TestIceModified(unittest.TestCase):
             f1, f2, f3, f4 = self.calculate_frequencies(self.data_singletons_only)
             S_chao1 = chao1(S_obs, f1, f2)
             result = iChao1(S_chao1, f1, f2, f3, f4)
-            expected = S_chao1  # No adjustment as there are no higher-order frequencies
+            expected = S_chao1
             self.assertEqual(result, expected, "iChao1 should equal Chao1 when only singletons exist")
 
         def test_ichao1_empty_data(self):
@@ -489,27 +486,30 @@ class TestIceModified(unittest.TestCase):
     # Chao2 tests
     class TestChao2Estimator(unittest.TestCase):
         def setUp(self):
-            # Custom datasets for testing
+
             self.data_log_normal = [
                 ["A", "B", "C", "D"],
                 ["A", "B", "E", "F"],
                 ["B", "G", "H"],
                 ["A", "C", "I", "G"],
                 ["A", "B", "C", "D"]
-            ]  # Normal case
+            ]
+
             self.data_log_no_doubletons = [
                 ["A"],
                 ["B"],
                 ["C"],
                 ["D"]
-            ]  # No doubletons
+
+            ]
             self.data_log_no_uniques = [
                 ["A", "B"],
                 ["A", "B"],
                 ["C", "D"],
                 ["C", "D"]
-            ]  # No unique species
-            self.data_log_empty = []  # Empty dataset
+
+            ]
+            self.data_log_empty = []
 
         def calculate_species_occurrences(self, data_log):
             S_obs = len(set(species for sample in data_log for species in sample))
@@ -529,14 +529,14 @@ class TestIceModified(unittest.TestCase):
         def test_chao2_no_doubletons(self):
             S_obs, Q1, Q2 = self.calculate_species_occurrences(self.data_log_no_doubletons)
             result = chao2(S_obs, Q1, Q2)
-            expected = S_obs + (Q1 ** 2) / 2  # Fallback formula
+            expected = S_obs + (Q1 ** 2) / 2
             self.assertAlmostEqual(result, expected, places=5,
                                    msg="Chao2 result does not match expected value when no doubletons exist")
 
         def test_chao2_no_uniques(self):
             S_obs, Q1, Q2 = self.calculate_species_occurrences(self.data_log_no_uniques)
             result = chao2(S_obs, Q1, Q2)
-            expected = S_obs  # No adjustment needed
+            expected = S_obs
             self.assertEqual(result, expected, "Chao2 should equal observed richness when no uniques exist")
 
         def test_chao2_empty_data(self):
@@ -547,7 +547,7 @@ class TestIceModified(unittest.TestCase):
 
         def test_chao2_single_sample(self):
             """Chao2 when only one sample is present"""
-            data_log_single_sample = [["A", "B", "C"]]  # Single sample
+            data_log_single_sample = [["A", "B", "C"]]  # single sample
             S_obs, Q1, Q2 = self.calculate_species_occurrences(data_log_single_sample)
             result = chao2(S_obs, Q1, Q2)
             expected = S_obs + (Q1 ** 2) / 2 if Q1 > 0 else S_obs
@@ -557,14 +557,14 @@ class TestIceModified(unittest.TestCase):
     # iChao2 tests
 class TestIChao2Estimator(unittest.TestCase):
     def setUp(self):
-        # Custom datasets for testing
+
         self.data_log_normal = [
             ["A", "B", "C", "D"],
             ["A", "B", "E", "F"],
             ["B", "G", "H"],
             ["A", "C", "I", "G"],
             ["A", "B", "C", "D"]
-        ]  # General case
+        ]
 
         self.data_log_no_quadrupletons = [
             ["A", "B"],
@@ -572,22 +572,25 @@ class TestIChao2Estimator(unittest.TestCase):
             ["B", "D"],
             ["C", "E"],
             ["D", "F"]
-        ]  # No quadrupletons
+
+        ]
 
         self.data_log_no_tripletons = [
             ["A", "B"],
             ["C", "D"],
             ["E", "F"]
-        ]  # No tripletons
+
+        ]
 
         self.data_log_no_duplicates = [
             ["A"],
             ["B"],
             ["C"],
             ["D"]
-        ]  # No duplicates
 
-        self.data_log_empty = []  # Empty dataset
+        ]
+
+        self.data_log_empty = []
 
     def calculate_species_occurrences(self, data_log):
         return calculate_Q_frequencies(data_log)
@@ -600,7 +603,6 @@ class TestIChao2Estimator(unittest.TestCase):
         S_chao2 = chao2(S_obs, Q1, Q2)
         result = iChao2(S_chao2, Q1, Q2, Q3, Q4, T)
 
-        # Calculate expected result manually
         factor1 = (T - 3) / (4 * T)
         factor2 = Q3 / Q4 if Q4 > 0 else 0
         nested_term = ((T - 3) / (2 * (T - 1))) * (Q2 * Q3 / Q4) if Q4 > 0 and T > 1 else 0
@@ -614,7 +616,7 @@ class TestIChao2Estimator(unittest.TestCase):
         T = len(self.data_log_no_quadrupletons)
         S_chao2 = chao2(S_obs, Q1, Q2)
         result = iChao2(S_chao2, Q1, Q2, Q3, Q4, T)
-        expected = S_chao2  # No correction as Q4 = 0
+        expected = S_chao2
         self.assertEqual(result, expected, "iChao2 should equal Chao2 when no quadrupletons exist")
 
     def test_ichao2_no_tripletons(self):
@@ -623,7 +625,7 @@ class TestIChao2Estimator(unittest.TestCase):
         T = len(self.data_log_no_tripletons)
         S_chao2 = chao2(S_obs, Q1, Q2)
         result = iChao2(S_chao2, Q1, Q2, Q3, Q4, T)
-        expected = S_chao2  # No correction as Q3 = 0
+        expected = S_chao2
         self.assertEqual(result, expected, "iChao2 should equal Chao2 when no tripletons exist")
 
     def test_ichao2_no_duplicates(self):
@@ -632,14 +634,14 @@ class TestIChao2Estimator(unittest.TestCase):
         T = len(self.data_log_no_duplicates)
         S_chao2 = chao2(S_obs, Q1, Q2)
         result = iChao2(S_chao2, Q1, Q2, Q3, Q4, T)
-        expected = S_chao2  # No correction as Q2 = 0
+        expected = S_chao2
         self.assertEqual(result, expected, "iChao2 should equal Chao2 when no duplicates exist")
 
     def test_ichao2_empty_data(self):
         S_obs, Q1, Q2, Q3, Q4, T = 0, 0, 0, 0, 0, 0
         S_chao2 = chao2(S_obs, Q1, Q2)
         result = iChao2(S_chao2, Q1, Q2, Q3, Q4, T)
-        expected = S_chao2  # Should be 0
+        expected = S_chao2
         self.assertEqual(result, expected, "iChao2 should return 0 for empty data")
 
 

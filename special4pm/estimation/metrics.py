@@ -257,7 +257,6 @@ def analyze_data_ace(data):
     F1_abund = sum(1 for x in data if x == 1)
     S_rare_abund = sum(1 for x in data if x <= 10)
 
-    # Precompute F_i (frequency counts for i = 1 to 10)
     #Fi_abund = [sum(1 for x in data if x == i) for i in range(1, 11)]
 
     Fi_abund = []
