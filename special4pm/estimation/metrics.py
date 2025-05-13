@@ -423,7 +423,7 @@ def calculate_gamma_sq_ice(S_inf, C_ice, m_inf, N_inf, Qj):
         return 0
 
     # Sum from j=1 to 10 of j(j-1)Qj
-    #sum_term = sum(j * (j - 1) * Qj[j - 1] for j in range(1, 10)) # MARTIN FRAGEN welche range eher die richtige ist
+    #sum_term = sum(j * (j - 1) * Qj[j - 1] for j in range(1, 10))
     sum_term = sum(j * (j - 1) * Qj[j - 1] for j in range(1, 11))
 
     # Calculate γ²_ice according to the formula

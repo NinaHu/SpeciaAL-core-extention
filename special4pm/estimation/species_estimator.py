@@ -598,7 +598,6 @@ class SpeciesEstimator:
 
         self.metrics[species_id]["chao1"].append(chao1_estimate)
 
-
     def __update_chao2(self, species_id: str) -> None:
         data = list(self.metrics[species_id].reference_sample_incidence.values())
         if not data:
@@ -615,7 +614,6 @@ class SpeciesEstimator:
             chao2_estimate = S_obs + (Q1 ** 2) / (2 * Q2)
 
         self.metrics[species_id]["chao2"].append(chao2_estimate)
-
 
     def __update_iChao1(self, species_id: str) -> None:
         data = list(self.metrics[species_id].reference_sample_abundance.values())
@@ -657,8 +655,6 @@ class SpeciesEstimator:
             self.metrics[species_id]["iChao2"].append(iChao2_result)
         else:
             self.metrics[species_id]["iChao2"].append(S_obs)
-
-        ### Nina
 
     def __update_d1(self, species_id: str) -> None:
         """
